@@ -1,3 +1,4 @@
+# database.py
 from datetime import datetime, timedelta
 from typing import List, Tuple
 
@@ -5,6 +6,7 @@ from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 
 from .config import TIME_ZONE
+from .logging import logger
 
 db = SQLAlchemy()
 
@@ -33,26 +35,8 @@ class Booking(db.Model):
     )
 
 
-def get_bookings_inbetween(
-    start: datetime, end: datetime
-) -> List[Tuple[datetime, datetime, str]]:
-    bookings = (
-        Booking.query.filter(Booking.start_time >= start, Booking.end_time <= end)
-        .order_by(Booking.start_time)
-        .all()
-    )
-    result = []
-    for booking in bookings:
-        username = (
-            f"{booking.user.first_name} {booking.user.last_name}"
-            if booking.user
-            else "Unknown"
-        )
-        result.append((booking.start_time, booking.end_time, username))
-    return result
-
-
 def fill_with_example_data():
+    logger.info("Filling database with sample data.")
     users = [
         User(
             first_name="José",
@@ -76,6 +60,8 @@ def fill_with_example_data():
     for user in users:
         db.session.add(user)
     db.session.commit()
+    logger.info("Users inserted.")
+
     u1 = User.query.filter_by(email="jose@example.com").first()
     u2 = User.query.filter_by(email="maria@example.com").first()
     u3 = User.query.filter_by(email="carlos@example.com").first()
@@ -112,3 +98,23 @@ def fill_with_example_data():
     for booking in bookings:
         db.session.add(booking)
     db.session.commit()
+    logger.info("Bookings inserted.")
+
+
+def get_bookings_inbetween(
+    start: datetime, end: datetime
+) -> List[Tuple[datetime, datetime, str]]:
+    bookings = (
+        Booking.query.filter(Booking.start_time >= start, Booking.end_time <= end)
+        .order_by(Booking.start_time)
+        .all()
+    )
+    result = []
+    for booking in bookings:
+        username = (
+            f"{booking.user.first_name} {booking.user.last_name}"
+            if booking.user
+            else "Unknown"
+        )
+        result.append((booking.start_time, booking.end_time, username))
+    return result

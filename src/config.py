@@ -1,3 +1,4 @@
+# config.py
 import os
 from datetime import timedelta
 from zoneinfo import ZoneInfo
@@ -15,3 +16,5 @@ SQLALCHEMY_DATABASE_URI = os.environ["DATABASE_URL"]
 SECRET_KEY = os.environ["SECRET_KEY"]
 
 TIME_ZONE = ZoneInfo(os.environ["TIME_ZONE"])
+LOG_LEVEL = os.environ["LOG_LEVEL"]
+LOG_FILE = os.environ["LOG_FILE"]
