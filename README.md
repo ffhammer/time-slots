@@ -18,4 +18,5 @@ bash run.sh
 
 Or via docker compose 
 ```bash
-docker-compose up --build```
+docker-compose up --build
+```

@@ -10,8 +10,8 @@ from flask_login import (
     logout_user,
 )
 
-from booking_management import get_availability
-from config import (
+from .booking_management import get_availability
+from .config import (
     MAX_TIME_SPAN,
     N_DAYS_AHEAD,
     SECRET_KEY,
@@ -20,8 +20,8 @@ from config import (
     START_DAY,
     END_DAY,
 )
-from database import Booking, User, db, fill_with_example_data, get_bookings_inbetween
-from forms import BookingForm, LoginForm, RegistrationForm, generate_booking_form
+from .database import Booking, User, db, fill_with_example_data, get_bookings_inbetween
+from .forms import BookingForm, LoginForm, RegistrationForm, generate_booking_form
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = SECRET_KEY

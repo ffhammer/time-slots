@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
-from config import END_DAY, N_DAYS_AHEAD, START_DAY, TIME_ZONE
-from database import get_bookings_inbetween
+from .config import END_DAY, N_DAYS_AHEAD, START_DAY, TIME_ZONE
+from .database import get_bookings_inbetween
 
 
 def get_availability():

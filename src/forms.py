@@ -10,7 +10,7 @@ from wtforms import (
     validators,
 )
 
-from config import END_DAY, START_DAY, TIME_ZONE
+from .config import END_DAY, START_DAY, TIME_ZONE
 
 
 class RegistrationForm(Form):
