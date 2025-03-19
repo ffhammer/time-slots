@@ -1,4 +1,14 @@
-from wtforms import Form, BooleanField, StringField, PasswordField, validators
+from wtforms import (
+    Form,
+    BooleanField,
+    StringField,
+    PasswordField,
+    validators,
+    SelectField,
+)
+from flask_wtf import FlaskForm
+from config import START_DAY, END_DAY, N_DAYS_AHEAD
+from datetime import datetime, timedelta
 
 
 class RegistrationForm(Form):
@@ -39,3 +49,34 @@ class LoginForm(Form):
     )
     password = PasswordField("Password", [validators.InputRequired()])
     remember_me = BooleanField("Remember Me")
+
+
+class BookingForm(FlaskForm):
+    date = SelectField("Date", choices=[], validators=[validators.InputRequired()])
+    start_hour = SelectField(
+        "Start Hour",
+        choices=list(range(START_DAY, END_DAY)),
+        validators=[validators.InputRequired()],
+    )
+    start_minute = SelectField(
+        "Start Minutes",
+        choices=[0, 15, 30, 45],
+        validators=[validators.InputRequired()],
+    )
+    end_hour = SelectField(
+        "End Hour",
+        choices=list(range(START_DAY, END_DAY + 1)),
+        validators=[validators.InputRequired()],
+    )
+    end_minute = SelectField(
+        "End Minutes", choices=[0, 15, 30, 45], validators=[validators.InputRequired()]
+    )
+
+
+def generate_booking_form() -> BookingForm:
+    form = BookingForm()
+    dates = [
+        (datetime.now() + timedelta(days=i)).strftime("%Y-%m-%d") for i in range(7)
+    ]
+    form.date.choices = [(d, d) for d in dates]
+    return form

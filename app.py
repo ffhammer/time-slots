@@ -6,10 +6,10 @@ from flask_login import (
     logout_user,
     current_user,
 )
-from database import User, Booking, db, fill_with_example_data
+from database import User, Booking, db, fill_with_example_data, get_bookings_inbetween
 from booking_management import get_availability
 from datetime import datetime, timedelta
-from forms import RegistrationForm, LoginForm
+from forms import RegistrationForm, LoginForm, BookingForm, generate_booking_form
 import click
 
 app = Flask(__name__)
@@ -85,26 +85,46 @@ def logout():
     return redirect(url_for("login"))
 
 
+def add_booking_if_available(booking: Booking):
+    if len(get_bookings_inbetween(start=booking.start_time, end=booking.end_time)):
+        flash("Already occupied", "danger")
+        return
+    try:
+        db.session.add(booking)
+        db.session.commit()
+        flash("Booking created successfully.", "success")
+    except Exception:
+        flash("Error saving booking.", "danger")
+
+
 @app.route("/", methods=["GET", "POST"])
 @login_required
 def index():
-    if request.method == "POST":
-        date_sel = request.form.get("date")
-        start_time_str = request.form.get("start_time")
-        end_time_str = request.form.get("end_time")
-        if date_sel and start_time_str and end_time_str:
-            start_dt = datetime.strptime(
-                f"{date_sel} {start_time_str}", "%Y-%m-%d %H:%M"
-            )
-            end_dt = datetime.strptime(f"{date_sel} {end_time_str}", "%Y-%m-%d %H:%M")
-            db.session.add(
-                Booking(user_id=current_user.id, start_time=start_dt, end_time=end_dt)
-            )
-            db.session.commit()
-        return redirect(url_for("index"))
     dates = [
         (datetime.now() + timedelta(days=i)).strftime("%Y-%m-%d") for i in range(7)
     ]
+    booking_form: BookingForm = (
+        generate_booking_form()
+    )  # Ensure this creates a BookingForm instance
+
+    # (Assuming generate_booking_form() sets choices appropriately)
+    if request.method == "POST" and booking_form.validate():
+        date_sel = booking_form.date.data
+        start_dt = datetime.strptime(
+            f"{date_sel} {booking_form.start_hour.data}:{booking_form.start_minute.data}",
+            "%Y-%m-%d %H:%M",
+        )
+        end_dt = datetime.strptime(
+            f"{date_sel} {booking_form.end_hour.data}:{booking_form.end_minute.data}",
+            "%Y-%m-%d %H:%M",
+        )
+        if start_dt >= end_dt:
+            flash("Start time must be before end time.", "danger")
+        else:
+            add_booking_if_available(
+                Booking(user_id=current_user.id, start_time=start_dt, end_time=end_dt)
+            )
+        return redirect(url_for("index"))
     availability = get_availability()
     return render_template(
         "index.html",
@@ -113,6 +133,7 @@ def index():
         availability=availability,
         START_DAY=8,
         END_DAY=22,
+        booking_form=booking_form,
     )
 
 

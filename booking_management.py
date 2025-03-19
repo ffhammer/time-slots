@@ -1,11 +1,10 @@
 from datetime import datetime, timedelta
 from database import get_bookings_inbetween
+from config import START_DAY, END_DAY
 
 
 def get_availability():
 
-    START_DAY = 8
-    END_DAY = 22
     today = datetime.now().date()
     avail = {}
     for offset in range(7):

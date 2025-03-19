@@ -1,4 +1,3 @@
-<!-- templates/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,7 +17,6 @@
   </style>
 </head>
 <body class="container mt-4">
-  <!-- Navigation Bar -->
   <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
     <div class="container-fluid">
       <a class="navbar-brand" href="{{ url_for('index') }}">Soccer Field Booking</a>
@@ -61,21 +59,26 @@
     <div class="col-md-4">
       <h3>Book a Time Slot</h3>
       <form method="POST">
+        {{ booking_form.hidden_tag() }}
         <div class="mb-3">
-          <label class="form-label">Date</label>
-          <select class="form-select" name="date" required>
-            {% for day in dates %}
-              <option value="{{ day }}">{{ day }}</option>
-            {% endfor %}
-          </select>
+          {{ booking_form.date.label(class="form-label") }}
+          {{ booking_form.date(class="form-select") }}
         </div>
         <div class="mb-3">
-          <label class="form-label">Start Time</label>
-          <input type="time" class="form-control" name="start_time" required>
+          {{ booking_form.start_hour.label(class="form-label") }}
+          {{ booking_form.start_hour(class="form-select") }}
         </div>
         <div class="mb-3">
-          <label class="form-label">End Time</label>
-          <input type="time" class="form-control" name="end_time" required>
+          {{ booking_form.start_minute.label(class="form-label") }}
+          {{ booking_form.start_minute(class="form-control") }}
+        </div>
+        <div class="mb-3">
+          {{ booking_form.end_hour.label(class="form-label") }}
+          {{ booking_form.end_hour(class="form-select") }}
+        </div>
+        <div class="mb-3">
+          {{ booking_form.end_minute.label(class="form-label") }}
+          {{ booking_form.end_minute(class="form-control") }}
         </div>
         <button type="submit" class="btn btn-primary">Book Now</button>
       </form>
