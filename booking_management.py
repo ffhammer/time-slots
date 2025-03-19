@@ -1,11 +1,11 @@
 from datetime import datetime, timedelta
+
+from config import END_DAY, N_DAYS_AHEAD, START_DAY, TIME_ZONE
 from database import get_bookings_inbetween
-from config import START_DAY, END_DAY, N_DAYS_AHEAD
 
 
 def get_availability():
-
-    today = datetime.now().date()
+    today = datetime.now(tz=TIME_ZONE).date()
     avail = {}
     for offset in range(N_DAYS_AHEAD):
         day = today + timedelta(days=offset)

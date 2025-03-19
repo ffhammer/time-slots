@@ -1,14 +1,16 @@
-from wtforms import (
-    Form,
-    BooleanField,
-    StringField,
-    PasswordField,
-    validators,
-    SelectField,
-)
-from flask_wtf import FlaskForm
-from config import START_DAY, END_DAY
 from datetime import datetime, timedelta
+
+from flask_wtf import FlaskForm
+from wtforms import (
+    BooleanField,
+    Form,
+    PasswordField,
+    SelectField,
+    StringField,
+    validators,
+)
+
+from config import END_DAY, START_DAY, TIME_ZONE
 
 
 class RegistrationForm(Form):
@@ -76,7 +78,8 @@ class BookingForm(FlaskForm):
 def generate_booking_form() -> BookingForm:
     form = BookingForm()
     dates = [
-        (datetime.now() + timedelta(days=i)).strftime("%Y-%m-%d") for i in range(7)
+        (datetime.now(tz=TIME_ZONE) + timedelta(days=i)).strftime("%Y-%m-%d")
+        for i in range(7)
     ]
     form.date.choices = [(d, d) for d in dates]
     return form

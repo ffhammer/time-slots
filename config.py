@@ -1,6 +1,8 @@
-from datetime import timedelta
-from dotenv import load_dotenv
 import os
+from datetime import timedelta
+from zoneinfo import ZoneInfo
+
+from dotenv import load_dotenv
 
 assert load_dotenv()
 
@@ -11,3 +13,5 @@ N_DAYS_AHEAD = int(os.environ["N_DAYS_AHEAD"])
 MAX_TIME_SPAN = timedelta(hours=int(os.environ["MAX_VALID_HOURS"]))
 SQLALCHEMY_DATABASE_URI = os.environ["DATABASE_URL"]
 SECRET_KEY = os.environ["SECRET_KEY"]
+
+TIME_ZONE = ZoneInfo(os.environ["TIME_ZONE"])

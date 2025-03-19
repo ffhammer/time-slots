@@ -1,8 +1,10 @@
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import UserMixin
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import List, Tuple
-from datetime import timedelta
+
+from flask_login import UserMixin
+from flask_sqlalchemy import SQLAlchemy
+
+from config import TIME_ZONE
 
 db = SQLAlchemy()
 
@@ -15,7 +17,9 @@ class User(db.Model, UserMixin):
     password = db.Column(
         db.String(255), nullable=False
     )  # In production, store a hashed password
-    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    created_at = db.Column(
+        db.DateTime, nullable=False, default=lambda: datetime.now(tz=TIME_ZONE)
+    )
     bookings = db.relationship("Booking", backref="user", lazy=True)
 
 
@@ -24,7 +28,9 @@ class Booking(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     start_time = db.Column(db.DateTime, nullable=False)
     end_time = db.Column(db.DateTime, nullable=False)
-    created_at = db.Column(db.DateTime, nullable=False, default=datetime.now())
+    created_at = db.Column(
+        db.DateTime, nullable=False, default=datetime.now(tz=TIME_ZONE)
+    )
 
 
 def get_bookings_inbetween(
@@ -73,7 +79,7 @@ def fill_with_example_data():
     u1 = User.query.filter_by(email="jose@example.com").first()
     u2 = User.query.filter_by(email="maria@example.com").first()
     u3 = User.query.filter_by(email="carlos@example.com").first()
-    tomorrow = (datetime.now() + timedelta(days=1)).date()
+    tomorrow = (datetime.now(tz=TIME_ZONE) + timedelta(days=1)).date()
     bookings = [
         Booking(
             user_id=u1.id,

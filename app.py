@@ -1,17 +1,25 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from datetime import datetime, timedelta
+
+import click
+from flask import Flask, flash, redirect, render_template, request, url_for
 from flask_login import (
     LoginManager,
-    login_user,
-    login_required,
-    logout_user,
     current_user,
+    login_required,
+    login_user,
+    logout_user,
 )
-from database import User, Booking, db, fill_with_example_data, get_bookings_inbetween
+
 from booking_management import get_availability
-from datetime import datetime, timedelta
-from forms import RegistrationForm, LoginForm, BookingForm, generate_booking_form
-import click
-from config import N_DAYS_AHEAD, MAX_TIME_SPAN, SECRET_KEY, SQLALCHEMY_DATABASE_URI
+from config import (
+    MAX_TIME_SPAN,
+    N_DAYS_AHEAD,
+    SECRET_KEY,
+    SQLALCHEMY_DATABASE_URI,
+    TIME_ZONE,
+)
+from database import Booking, User, db, fill_with_example_data, get_bookings_inbetween
+from forms import BookingForm, LoginForm, RegistrationForm, generate_booking_form
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = SECRET_KEY
@@ -102,7 +110,7 @@ def add_booking_if_available(booking: Booking):
 @login_required
 def index():
     dates = [
-        (datetime.now() + timedelta(days=i)).strftime("%Y-%m-%d")
+        (datetime.now(tz=TIME_ZONE) + timedelta(days=i)).strftime("%Y-%m-%d")
         for i in range(N_DAYS_AHEAD)
     ]
     booking_form: BookingForm = (
@@ -123,7 +131,7 @@ def index():
 
         if start_dt >= end_dt:
             flash("Start time must be before end time.", "danger")
-        elif end_dt < datetime.now():
+        elif end_dt < datetime.now(tz=TIME_ZONE):
             flash("Booking is in the Past", "danger")
         elif end_dt - start_dt > MAX_TIME_SPAN:
             flash(f"Booking ecxeeds {MAX_TIME_SPAN}", "danger")
@@ -145,4 +153,6 @@ def index():
 
 
 if __name__ == "__main__":
+    with app.app_context():
+        db.create_all()
     app.run(debug=True)
