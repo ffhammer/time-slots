@@ -3,7 +3,6 @@ from flask_login import UserMixin
 from datetime import datetime
 from typing import List, Tuple
 from datetime import timedelta
-import click
 
 db = SQLAlchemy()
 

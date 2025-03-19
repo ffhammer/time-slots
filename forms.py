@@ -7,7 +7,7 @@ from wtforms import (
     SelectField,
 )
 from flask_wtf import FlaskForm
-from config import START_DAY, END_DAY, N_DAYS_AHEAD
+from config import START_DAY, END_DAY
 from datetime import datetime, timedelta
 
 

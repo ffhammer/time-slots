@@ -11,11 +11,11 @@ from booking_management import get_availability
 from datetime import datetime, timedelta
 from forms import RegistrationForm, LoginForm, BookingForm, generate_booking_form
 import click
-from config import N_DAYS_AHEAD, MAX_TIME_SPAN
+from config import N_DAYS_AHEAD, MAX_TIME_SPAN, SECRET_KEY, SQLALCHEMY_DATABASE_URI
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = "REPLACE_WITH_A_SECURE_KEY"
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///booking_app.db"
+app.config["SECRET_KEY"] = SECRET_KEY
+app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db.init_app(app)
 
