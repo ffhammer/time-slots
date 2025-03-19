@@ -11,6 +11,7 @@ from booking_management import get_availability
 from datetime import datetime, timedelta
 from forms import RegistrationForm, LoginForm, BookingForm, generate_booking_form
 import click
+from config import N_DAYS_AHEAD, MAX_TIME_SPAN
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "REPLACE_WITH_A_SECURE_KEY"
@@ -101,7 +102,8 @@ def add_booking_if_available(booking: Booking):
 @login_required
 def index():
     dates = [
-        (datetime.now() + timedelta(days=i)).strftime("%Y-%m-%d") for i in range(7)
+        (datetime.now() + timedelta(days=i)).strftime("%Y-%m-%d")
+        for i in range(N_DAYS_AHEAD)
     ]
     booking_form: BookingForm = (
         generate_booking_form()
@@ -118,8 +120,13 @@ def index():
             f"{date_sel} {booking_form.end_hour.data}:{booking_form.end_minute.data}",
             "%Y-%m-%d %H:%M",
         )
+
         if start_dt >= end_dt:
             flash("Start time must be before end time.", "danger")
+        elif end_dt < datetime.now():
+            flash("Booking is in the Past", "danger")
+        elif end_dt - start_dt > MAX_TIME_SPAN:
+            flash(f"Booking ecxeeds {MAX_TIME_SPAN}", "danger")
         else:
             add_booking_if_available(
                 Booking(user_id=current_user.id, start_time=start_dt, end_time=end_dt)
