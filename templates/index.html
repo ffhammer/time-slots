@@ -1,0 +1,70 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ title }}</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <style>
+    .schedule-container { display: flex; align-items: flex-start; }
+    .time-labels { width: 40px; position: relative; height: 420px; }
+    .time-label { position: absolute; left: 0; width: 100%; text-align: right; font-size: 0.7rem; }
+    .day-container { width: 150px; border: 1px solid #ccc; margin: 0 5px; position: relative; height: 420px; }
+    .day-header { text-align: center; background: #f8f9fa; padding: 4px 0; border-bottom: 1px solid #ccc; font-size: 0.9rem; }
+    .block { position: absolute; left: 0; right: 0; font-size: 0.8rem; overflow: hidden;
+             display: flex; align-items: center; justify-content: center; color: #333; }
+    .free { background-color: #b7e4c7; }
+    .reserved { background-color: #ffcccc; }
+  </style>
+</head>
+<body class="container mt-4">
+  <h1 class="text-center">{{ title }}</h1>
+  <div class="row">
+    <div class="col-md-8">
+      <div class="schedule-container mt-4">
+        <div class="time-labels">
+          {% for hour in range(START_DAY, END_DAY + 1) %}
+            <div class="time-label" style="top: {{ (hour - START_DAY)*60*0.5 - 4 }}px;">{{ hour }}:00</div>
+          {% endfor %}
+        </div>
+        {% for day in dates %}
+          <div class="day-container">
+            <div class="day-header">{{ day }}</div>
+            {% for block in availability[day] %}
+              <div class="block {{ block.status }}" style="top: {{ block.offset * 0.5 }}px; height: {{ block.duration * 0.5 }}px;">
+                {% if block.status == 'reserved' %}
+                  {{ block.name }}
+                {% else %}
+                  Free
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="col-md-4">
+      <h3>Book a Time Slot</h3>
+      <form method="POST">
+        <div class="mb-3">
+          <label class="form-label">Date</label>
+          <select class="form-select" name="date" required>
+            {% for day in dates %}
+              <option value="{{ day }}">{{ day }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Start Time</label>
+          <input type="time" class="form-control" name="start_time" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">End Time</label>
+          <input type="time" class="form-control" name="end_time" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Book Now</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
