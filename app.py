@@ -50,7 +50,6 @@ def fill_samples():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    print("loging called")
     form = LoginForm(request.form)
     if request.method == "POST" and form.validate():
         user = User.query.filter_by(email=form.email.data).first()
@@ -123,11 +122,11 @@ def index():
         start_dt = datetime.strptime(
             f"{date_sel} {booking_form.start_hour.data}:{booking_form.start_minute.data}",
             "%Y-%m-%d %H:%M",
-        )
+        ).replace(tzinfo=TIME_ZONE)
         end_dt = datetime.strptime(
             f"{date_sel} {booking_form.end_hour.data}:{booking_form.end_minute.data}",
             "%Y-%m-%d %H:%M",
-        )
+        ).replace(tzinfo=TIME_ZONE)
 
         if start_dt >= end_dt:
             flash("Start time must be before end time.", "danger")
