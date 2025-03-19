@@ -119,9 +119,10 @@ def register():
 @app.route("/logout")
 @login_required
 def logout():
+    user_mail = current_user.email if current_user else "unknown"
     logout_user()
     flash("Logged out successfully.", "info")
-    logger.info(f"User logged out: {current_user.email if current_user else 'unknown'}")
+    logger.info(f"User logged out: {user_mail}")
     return redirect(url_for("login"))
 
 
@@ -194,6 +195,48 @@ def index():
         START_DAY=START_DAY,
         END_DAY=END_DAY,
         booking_form=booking_form,
+    )
+
+
+@app.route("/manage_bookings", methods=["GET", "POST"])
+@login_required
+def manage_bookings():
+    if request.method == "POST":
+        booking_id = request.form.get("booking_id")
+        if booking_id:
+            booking = Booking.query.get(booking_id)
+            if booking and booking.user_id == current_user.id:
+                try:
+                    db.session.delete(booking)
+                    db.session.commit()
+                    flash("Booking deleted.", "success")
+                    logger.info(f"Booking {booking_id} deleted by {current_user.email}")
+                except Exception as e:
+                    db.session.rollback()
+                    flash("Error deleting booking.", "danger")
+                    logger.error(f"Error deleting booking {booking_id}: {e}")
+            else:
+                flash("Unauthorized deletion attempt.", "danger")
+                logger.warning(
+                    f"Unauthorized deletion attempt for booking {booking_id} by {current_user.email}"
+                )
+        return redirect(url_for("manage_bookings"))
+    try:
+        bookings = (
+            Booking.query.filter_by(user_id=current_user.id)
+            .order_by(Booking.start_time)
+            .all()
+        )
+    except Exception as e:
+        flash("Error fetching bookings.", "danger")
+        logger.error(f"Error fetching bookings for {current_user.email}: {e}")
+        bookings = []
+    return render_template(
+        "manage_bookings.html",
+        title="Manage Bookings",
+        bookings=bookings,
+        START_DAY=START_DAY,
+        END_DAY=END_DAY,
     )
 
 
