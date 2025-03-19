@@ -17,6 +17,8 @@ from config import (
     SECRET_KEY,
     SQLALCHEMY_DATABASE_URI,
     TIME_ZONE,
+    START_DAY,
+    END_DAY,
 )
 from database import Booking, User, db, fill_with_example_data, get_bookings_inbetween
 from forms import BookingForm, LoginForm, RegistrationForm, generate_booking_form
@@ -145,8 +147,8 @@ def index():
         title="Soccer Field Booking",
         dates=dates,
         availability=availability,
-        START_DAY=8,
-        END_DAY=22,
+        START_DAY=START_DAY,
+        END_DAY=END_DAY,
         booking_form=booking_form,
     )
 

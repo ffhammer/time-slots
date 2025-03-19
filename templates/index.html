@@ -8,7 +8,7 @@
     .schedule-container { display: flex; align-items: flex-start; }
     .time-labels { width: 40px; position: relative; height: 420px; }
     .time-label { position: absolute; left: 0; width: 100%; text-align: right; font-size: 0.7rem; }
-    .day-container { width: 150px; border: 1px solid #ccc; margin: 0 5px; position: relative; height: 420px; }
+    .day-container { width: 120px; border: 1px solid #ccc; margin: 0 5px; position: relative; height: 420px; }
     .day-header { text-align: center; background: #f8f9fa; padding: 4px 0; border-bottom: 1px solid #ccc; font-size: 0.9rem; }
     .block { position: absolute; left: 0; right: 0; font-size: 0.8rem; overflow: hidden;
              display: flex; align-items: center; justify-content: center; color: #333; }
@@ -34,15 +34,22 @@
   <h1 class="text-center">{{ title }}</h1>
   <div class="row">
     <div class="col-md-8">
-      <div class="schedule-container mt-4">
-        <div class="time-labels">
+      <!-- Dates Row -->
+      <div class="d-flex justify-content-start mt-3">
+        <div style="width: 40px;"></div> <!-- Spacer for time column -->
+        {% for day in dates %}
+          <div class="day-header" style="width: 120px; text-align: center;">{{ day }}</div>
+        {% endfor %}
+      </div>
+  
+      <div class="schedule-container mt-2">
+        <div class="time-labels" style="height: {{ (END_DAY - START_DAY) * 30 }}px;">
           {% for hour in range(START_DAY, END_DAY + 1) %}
-            <div class="time-label" style="top: {{ (hour - START_DAY)*60*0.5 - 4 }}px;">{{ hour }}:00</div>
+            <div class="time-label" style="top: {{ (hour - START_DAY) * 30 - 5}}px;">{{ hour }}:00</div>
           {% endfor %}
         </div>
         {% for day in dates %}
-          <div class="day-container">
-            <div class="day-header">{{ day }}</div>
+        <div class="day-container" style="width: 120px; height: {{ (END_DAY - START_DAY) * 30 }}px;">
             {% for block in availability[day] %}
               <div class="block {{ block.status }}" style="top: {{ block.offset * 0.5 }}px; height: {{ block.duration * 0.5 }}px;">
                 {% if block.status == 'reserved' %}
@@ -56,39 +63,58 @@
         {% endfor %}
       </div>
     </div>
+  
+    <!-- Booking form stays in the same row to the right -->
     <div class="col-md-4">
       {% with messages = get_flashed_messages(with_categories=True) %}
-  {% if messages %}
-    {% for category, message in messages %}
-      <div class="alert alert-{{ category }}">{{ message }}</div>
-    {% endfor %}
-  {% endif %}
-{% endwith %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+      {% endwith %}
       <h3>Book a Time Slot</h3>
-      <form method="POST">
-        {{ booking_form.hidden_tag() }}
-        <div class="mb-3">
-          {{ booking_form.date.label(class="form-label") }}
-          {{ booking_form.date(class="form-select") }}
-        </div>
-        <div class="mb-3">
-          {{ booking_form.start_hour.label(class="form-label") }}
-          {{ booking_form.start_hour(class="form-select") }}
-        </div>
-        <div class="mb-3">
-          {{ booking_form.start_minute.label(class="form-label") }}
-          {{ booking_form.start_minute(class="form-control") }}
-        </div>
-        <div class="mb-3">
-          {{ booking_form.end_hour.label(class="form-label") }}
-          {{ booking_form.end_hour(class="form-select") }}
-        </div>
-        <div class="mb-3">
-          {{ booking_form.end_minute.label(class="form-label") }}
-          {{ booking_form.end_minute(class="form-control") }}
-        </div>
-        <button type="submit" class="btn btn-primary">Book Now</button>
-      </form>
+<form method="POST">
+  {{ booking_form.hidden_tag() }}
+
+  <div class="mb-3">
+    {{ booking_form.date.label(class="form-label") }}
+    {{ booking_form.date(class="form-select") }}
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="mb-3">
+        {{ booking_form.start_hour.label(class="form-label") }}
+        {{ booking_form.start_hour(class="form-select") }}
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="mb-3">
+        {{ booking_form.start_minute.label(class="form-label") }}
+        {{ booking_form.start_minute(class="form-control") }}
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="mb-3">
+        {{ booking_form.end_hour.label(class="form-label") }}
+        {{ booking_form.end_hour(class="form-select") }}
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="mb-3">
+        {{ booking_form.end_minute.label(class="form-label") }}
+        {{ booking_form.end_minute(class="form-control") }}
+      </div>
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Book Now</button>
+</form>
+
     </div>
   </div>
 </body>

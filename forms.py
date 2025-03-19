@@ -56,22 +56,22 @@ class LoginForm(Form):
 class BookingForm(FlaskForm):
     date = SelectField("Date", choices=[], validators=[validators.InputRequired()])
     start_hour = SelectField(
-        "Start Hour",
+        "Start - Hour:",
         choices=list(range(START_DAY, END_DAY)),
         validators=[validators.InputRequired()],
     )
     start_minute = SelectField(
-        "Start Minutes",
+        "Minute:",
         choices=[0, 15, 30, 45],
         validators=[validators.InputRequired()],
     )
     end_hour = SelectField(
-        "End Hour",
+        "End - Hour:",
         choices=list(range(START_DAY, END_DAY + 1)),
         validators=[validators.InputRequired()],
     )
     end_minute = SelectField(
-        "End Minutes", choices=[0, 15, 30, 45], validators=[validators.InputRequired()]
+        "Minute:", choices=[0, 15, 30, 45], validators=[validators.InputRequired()]
     )
 
 
