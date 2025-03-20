@@ -1,0 +1,30 @@
+<div class="col-md-8">
+  <!-- Dates Row -->
+  <div class="d-flex justify-content-start mt-3">
+    <div style="width: 40px;"></div> <!-- Spacer for time column -->
+    {% for day in dates %}
+      <div class="day-header" style="width: 120px; text-align: center;">{{ day }}</div>
+    {% endfor %}
+  </div>
+
+  <div class="schedule-container mt-2">
+    <div class="time-labels" style="height: {{ (END_DAY - START_DAY) * 30 }}px;">
+      {% for hour in range(START_DAY, END_DAY + 1) %}
+        <div class="time-label" style="top: {{ (hour - START_DAY) * 30 - 5}}px;">{{ hour }}:00</div>
+      {% endfor %}
+    </div>
+    {% for day in dates %}
+    <div class="day-container" style="width: 120px; height: {{ (END_DAY - START_DAY) * 30 }}px;">
+        {% for block in availability[day] %}
+          <div class="block {{ block.status }}" style="top: {{ block.offset * 0.5 }}px; height: {{ block.duration * 0.5 }}px;">
+            {% if block.status == 'reserved' %}
+              {{ block.name }}
+            {% else %}
+              Free
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+  </div>
+</div>

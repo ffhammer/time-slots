@@ -1,0 +1,70 @@
+/* static/css/styles.css */
+body {
+    background-color: #f4f4f4;
+    font-family: Arial, sans-serif;
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+.btn {
+    border-radius: 0.2rem;
+}
+
+.schedule-container {
+    display: flex;
+    align-items: flex-start;
+}
+
+.time-labels {
+    width: 40px;
+    position: relative;
+    height: 420px;
+}
+
+.time-label {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    text-align: right;
+    font-size: 0.7rem;
+}
+
+.day-container {
+    width: 120px;
+    border: 1px solid #ccc;
+    margin: 0 5px;
+    position: relative;
+    height: 420px;
+}
+
+.day-header {
+    text-align: center;
+    background: #f8f9fa;
+    padding: 4px 0;
+    border-bottom: 1px solid #ccc;
+    font-size: 0.9rem;
+}
+
+.block {
+    position: absolute;
+    left: 0;
+    right: 0;
+    font-size: 0.8rem;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+}
+
+.free {
+    background-color: #b7e4c7;
+}
+
+.reserved {
+    background-color: #ffcccc;
+}
+
+/* Additional common styling can go here */
